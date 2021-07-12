@@ -40,7 +40,7 @@ for i in "${!rigs_name[@]}"; do
     loads+=($(echo "{rig=\"${rig_name}\",device=\"${device_name}\",status=\"${device_status}\"} ${device_load}"))
 
     device_algo=$(echo "${device}" | jq -r .speeds[0].algorithm)
-    device_speed=$(echo "${device}" | jq -r .speeds[0].speed)
+    device_speed=$(echo "${device}" | jq -r .speeds[0].speed|awk '{printf("%d\n",$1 + .0.5)}')
     speeds+=($(echo "{rig=\"${rig_name}\",device=\"${device_name}\",algo=\"${device_algo}\"} ${device_speed}"))
 
     if [ "${device_status}" = "MINING" ]; then
