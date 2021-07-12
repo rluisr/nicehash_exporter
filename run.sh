@@ -19,6 +19,7 @@ rigs_name=($(echo "${rigs_result}" | jq -r .miningRigs[].name))
 temps=()
 loads=()
 speeds=()
+total_speed=0
 active_devices=0
 
 for i in "${!rigs_name[@]}"; do
@@ -40,8 +41,9 @@ for i in "${!rigs_name[@]}"; do
     loads+=($(echo "{rig=\"${rig_name}\",device=\"${device_name}\",status=\"${device_status}\"} ${device_load}"))
 
     device_algo=$(echo "${device}" | jq -r .speeds[0].algorithm)
-    device_speed=$(echo "${device}" | jq -r .speeds[0].speed|awk '{printf("%d\n",$1 + .0.5)}')
+    device_speed=$(echo "${device}" | jq -r .speeds[0].speed | awk '{printf("%d\n",$1 + .0.5)}')
     speeds+=($(echo "{rig=\"${rig_name}\",device=\"${device_name}\",algo=\"${device_algo}\"} ${device_speed}"))
+    total_speed=$(($total_speed + $device_speed))
 
     if [ "${device_status}" = "MINING" ]; then
       active_devices=$(expr $active_devices + 1)
@@ -71,3 +73,7 @@ echo "# TYPE nicehash_device_speed"
 for speed in "${speeds[@]}"; do
   echo "nicehash_device_speed${speed}"
 done
+
+echo "# HELP nicehash_total_speed"
+echo "# TYPE nicehash_total_speed"
+echo "nicehash_total_speed ${total_speed}"
