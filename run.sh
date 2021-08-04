@@ -19,6 +19,13 @@ rigs_name=($(echo "${rigs_result}" | jq -r .miningRigs[].name))
 temps=()
 loads=()
 speeds=()
+accepted_speeds=()
+rejected_r1_target_speeds=()
+rejected_r2_stale_speeds=()
+rejected_r3_duplicate_speeds=()
+rejected_r4_ntime_speeds=()
+rejected_r5_other_speeds=()
+total_rejected_speeds=()
 total_speed=0
 active_devices=0
 
@@ -50,6 +57,27 @@ for i in "${!rigs_name[@]}"; do
     fi
   done
   IFS_BACKUP=$IFS
+
+  accepted_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedAccepted)
+  accepted_speeds+=($(echo "{rig=\"${rig_name}\"} ${accepted_speed}"))
+
+  rejected_r1_target_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR1Target)
+  rejected_r1_target_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r1_target_speed}"))
+
+  rejected_r2_stale_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR2Stale)
+  rejected_r2_stale_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r2_stale_speed}"))
+
+  rejected_r3_duplicate_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR3Duplicate)
+  rejected_r3_duplicate_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r3_duplicate_speed}"))
+
+  rejected_r4_ntime_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR4NTime)
+  rejected_r4_ntime_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r4_ntime_speed}"))
+
+  rejected_r5_other_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR5Other)
+  rejected_r5_other_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r5_other_speed}"))
+
+  total_rejected_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedTotal)
+  total_rejected_speeds+=($(echo "{rig=\"${rig_name}\"} ${total_rejected_speed}"))
 done
 
 echo "# HELP nicehash_active_devices"
@@ -77,3 +105,45 @@ done
 echo "# HELP nicehash_total_speed"
 echo "# TYPE nicehash_total_speed"
 echo "nicehash_total_speed ${total_speed}"
+
+echo "# HELP nicehash_speed_accepted"
+echo "# TYPE nicehash_speed_accepted"
+for accepted_speed in "${accepted_speeds[@]}"; do
+  echo "nicehash_speed_accepted${accepted_speed}"
+done
+
+echo "# HELP nicehash_rejected_r1_target_speed"
+echo "# TYPE nicehash_rejected_r1_target_speed"
+for rejected_r1_target_speed in "${rejected_r1_target_speeds[@]}"; do
+  echo "nicehash_rejected_r1_target_speed${rejected_r1_target_speed}"
+done
+
+echo "# HELP nicehash_rejected_r2_stale_speed"
+echo "# TYPE nicehash_rejected_r2_stale_speed"
+for rejected_r2_stale_speed in "${rejected_r2_stale_speeds[@]}"; do
+  echo "nicehash_rejected_r2_stale_speed${rejected_r2_stale_speed}"
+done
+
+echo "# HELP nicehash_rejected_r3_duplicate_speed"
+echo "# TYPE nicehash_rejected_r3_duplicate_speed"
+for rejected_r3_duplicate_speed in "${rejected_r3_duplicate_speeds[@]}"; do
+  echo "nicehash_rejected_r3_duplicate_speed${rejected_r3_duplicate_speed}"
+done
+
+echo "# HELP nicehash_rejected_r4_ntime_speed"
+echo "# TYPE nicehash_rejected_r4_ntime_speed"
+for rejected_r4_ntime_speed in "${rejected_r4_ntime_speeds[@]}"; do
+  echo "nicehash_rejected_r4_ntime_speed${rejected_r4_ntime_speed}"
+done
+
+echo "# HELP nicehash_rejected_r5_other_speed"
+echo "# TYPE nicehash_rejected_r5_other_speed"
+for rejected_r5_other_speed in "${rejected_r5_other_speeds[@]}"; do
+  echo "nicehash_rejected_r5_other_speed${rejected_r5_other_speed}"
+done
+
+echo "# HELP nicehash_total_rejected_speed"
+echo "# TYPE nicehash_total_rejected_speed"
+for total_rejected_speed in "${total_rejected_speeds[@]}"; do
+  echo "nicehash_total_rejected_speed${total_rejected_speed}"
+done
