@@ -83,6 +83,6 @@ nicehash_total_rejected_speed{rig="worker1"} 32.51579355315997
 
 Grafana
 -------
-![grafana](https://f.easyuploader.app/20210712230113_624f3366.png)
+![grafana](https://f.easyuploader.app/20210804225314_6f624f46.png)
 
 [Get Grafana Dashboard](https://grafana.com/grafana/dashboards/14718)
