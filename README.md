@@ -86,3 +86,11 @@ Grafana
 ![grafana](https://f.easyuploader.app/20210804225314_6f624f46.png)
 
 [Get Grafana Dashboard](https://grafana.com/grafana/dashboards/14718)
+
+
+Tip
+---
+
+### parse error: Invalid numeric literal at line 1, column 11
+
+You passed wrong `KEY`, `SEC` and `ORG`.
