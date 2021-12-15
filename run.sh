@@ -10,6 +10,7 @@ API="https://api2.nicehash.com"
 NHCLIENT="python3 nicehash.py -b $API -o $ORG -k $KEY -s $SEC"
 
 rigs_result=$(eval "$NHCLIENT -m GET -p '/main/api/v2/mining/rigs2'" | sed 's/True/true/g' | sed 's/False/false/g' | sed "s/'/\"/g")
+account_result=$(eval "$NHCLIENT -m GET -p '/main/api/v2/accounting/account2/BTC'" | sed 's/True/true/g' | sed 's/False/false/g' | sed "s/'/\"/g")
 
 total_rigs=$(echo "${rigs_result}" | jq -r .totalRigs)
 mining_rigs=$(echo "${rigs_result}" | jq -r .minerStatuses.MINING)
@@ -28,6 +29,9 @@ rejected_r5_other_speeds=()
 total_rejected_speeds=()
 total_speed=0
 active_devices=0
+total_balance=($(echo "${account_result}" | jq -r .totalBalance))
+total_profitability=($(echo "${rigs_result}" | jq -r .totalProfitability))
+unpaid_amount=($(echo "${rigs_result}" | jq -r .unpaidAmount))
 
 for i in "${!rigs_name[@]}"; do
   rig_name="${rigs_name[$i]}"
@@ -79,6 +83,18 @@ for i in "${!rigs_name[@]}"; do
   total_rejected_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedTotal)
   total_rejected_speeds+=($(echo "{rig=\"${rig_name}\"} ${total_rejected_speed}"))
 done
+
+echo "# HELP total_balance"
+echo "# TYPE total_balance"
+echo "nicehash_total_balance ${total_balance}"
+
+echo "# HELP total_profitability"
+echo "# TYPE total_profitability"
+echo "nicehash_total_profitability ${total_profitability}"
+
+echo "# HELP unpaid_amount"
+echo "# TYPE unpaid_amount"
+echo "nicehash_unpaid_amount ${unpaid_amount}"
 
 echo "# HELP nicehash_active_devices"
 echo "# TYPE nicehash_active_devices"
