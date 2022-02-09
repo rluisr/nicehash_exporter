@@ -1,3 +1,6 @@
+#
+# shfmt -i 2 -w run.sh
+#
 #!/bin/bash
 
 set -eu
@@ -62,26 +65,41 @@ for i in "${!rigs_name[@]}"; do
   done
   IFS_BACKUP=$IFS
 
-  accepted_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedAccepted)
-  accepted_speeds+=($(echo "{rig=\"${rig_name}\"} ${accepted_speed}"))
+  value=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedAccepted)
+  if [ "${value}" != "null" ]; then
+    accepted_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
 
-  rejected_r1_target_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR1Target)
-  rejected_r1_target_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r1_target_speed}"))
+  value=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR1Target)
+  if [ "${value}" != "null" ]; then
+    rejected_r1_target_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
 
-  rejected_r2_stale_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR2Stale)
-  rejected_r2_stale_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r2_stale_speed}"))
+  value=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR2Stale)
+  if [ "${value}" != "null" ]; then
+    rejected_r2_stale_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
 
-  rejected_r3_duplicate_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR3Duplicate)
-  rejected_r3_duplicate_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r3_duplicate_speed}"))
+  value=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR3Duplicate)
+  if [ "${value}" != "null" ]; then
+    rejected_r3_duplicate_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
 
-  rejected_r4_ntime_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR4NTime)
-  rejected_r4_ntime_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r4_ntime_speed}"))
+  value=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR4NTime)
+  if [ "${value}" != "null" ]; then
+    rejected_r4_ntime_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
 
   rejected_r5_other_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedR5Other)
-  rejected_r5_other_speeds+=($(echo "{rig=\"${rig_name}\"} ${rejected_r5_other_speed}"))
+  if [ "${value}" != "null" ]; then
+    rejected_r5_other_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
 
   total_rejected_speed=$(echo "${rigs_result}" | jq -r .miningRigs[$i].stats[0].speedRejectedTotal)
-  total_rejected_speeds+=($(echo "{rig=\"${rig_name}\"} ${total_rejected_speed}"))
+  if [ "${value}" != "null" ]; then
+    total_rejected_speeds+=($(echo "{rig=\"${rig_name}\"} ${value}"))
+  fi
+
 done
 
 echo "# HELP total_balance"
